@@ -13,9 +13,11 @@ database_url = os.environ.get("DATABASE_URL")
 if database_url:
     config.set_main_option("sqlalchemy.url", database_url)
 
-# Week 1 (docs/05-ROADMAP.md): point this at SQLModel.metadata once
-# app/models.py exists, so autogenerate can diff the ERD.
-target_metadata = None
+from sqlmodel import SQLModel  # noqa: E402
+
+from app import models  # noqa: E402,F401  (registers tables on SQLModel.metadata)
+
+target_metadata = SQLModel.metadata
 
 
 def run_migrations_offline() -> None:

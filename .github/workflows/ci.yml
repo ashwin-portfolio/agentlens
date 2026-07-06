@@ -21,6 +21,30 @@ jobs:
 
   server:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: agentlens
+          POSTGRES_PASSWORD: agentlens
+          POSTGRES_DB: agentlens
+        ports:
+          # Host 5433 to match docker-compose.yml, so tests use one URL everywhere.
+          - "5433:5432"
+        options: >-
+          --health-cmd "pg_isready -U agentlens -d agentlens"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:7
+        ports:
+          - "6379:6379"
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
